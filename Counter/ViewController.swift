@@ -7,17 +7,13 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+final class ViewController: UIViewController {
     
-    @IBOutlet weak var counterLabel: UILabel!
-
-    @IBOutlet weak var buttonPlus: UIButton!
-    
-    @IBOutlet weak var buttonMinus: UIButton!
-    
-    @IBOutlet weak var actionLog: UITextView!
-    
-    @IBOutlet weak var buttonZero: UIButton!
+    @IBOutlet private weak var counterLabel: UILabel!
+    @IBOutlet private weak var actionLogLabel: UITextView!
+    @IBOutlet private weak var incrementButton: UIButton!
+    @IBOutlet private weak var decrementButton: UIButton!
+    @IBOutlet private weak var resetButton: UIButton!
     
     private var counter: Int = 0 {
         didSet {
@@ -25,59 +21,60 @@ class ViewController: UIViewController {
         }
     }
     
+    private lazy var dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd.MM.yyyy HH:mm:ss"
+        return formatter
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
         
         updateCounterLabel()
         
-        actionLog.text = "История изменений:"
-        actionLog.isEditable = false
-    }
-
-    private func updateCounterLabel() {
-        counterLabel.text = "Значение счетчика: \(counter)"
+        actionLogLabel.text = "История изменений:"
+        actionLogLabel.isEditable = false
     }
     
-    private func updateActionLog(_ action: Int) {
-        
-        let dateFormatter = DateFormatter()
+    private func updateCounterLabel() {
+        counterLabel.text = "Значение счётчика: \(counter)"
+    }
+    
+    private func updateActionLogLabel(_ action: Int) {
         dateFormatter.dateFormat = "dd.MM.yyyy HH:mm:ss"
         let currentDateString = dateFormatter.string(from: Date())
         
         switch action {
         case 1:
-            actionLog.text += "\n\(currentDateString): значение изменено на +1"
+            actionLogLabel.text += "\n\(currentDateString): значение изменено на +1"
         case -1:
-            actionLog.text += "\n\(currentDateString): значение изменено на -1"
+            actionLogLabel.text += "\n\(currentDateString): значение изменено на -1"
         case -2:
-            actionLog.text += "\n\(currentDateString): попытка уменьшить значение счетчика ниже 0"
+            actionLogLabel.text += "\n\(currentDateString): попытка уменьшить значение счётчика ниже 0"
         case 0:
-            actionLog.text += "\n\(currentDateString): значение сброшено"
+            actionLogLabel.text += "\n\(currentDateString): значение сброшено"
         default:
             break
         }
     }
     
-    @IBAction func buttonPlusTap(_ sender: Any) {
+    @IBAction private func incrementButtonTap(_ sender: Any) {
         counter += 1
-        updateActionLog(1)
+        updateActionLogLabel(1)
     }
     
-    @IBAction func buttonMinusTap(_ sender: Any) {
+    @IBAction private func decrementButtonTap(_ sender: Any) {
         if counter > 0 {
             counter -= 1
-            updateActionLog(-1)
+            updateActionLogLabel(-1)
+        } else {
+            updateActionLogLabel(-2)
         }
-        else {
-            updateActionLog(-2)
-        }
-        
     }
     
-    @IBAction func buttonZeroTap(_ sender: Any) {
+    @IBAction private func resetButtonTap(_ sender: Any) {
         counter = 0
-        updateActionLog(0)
+        updateActionLogLabel(0)
     }
 }
 
